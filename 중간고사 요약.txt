@@ -1,0 +1,366 @@
+github.com/ai7dnn/2020-2-AI
+
+18 머신러닝 분류 개요
+영어도 알아두셈
+지도학습(supervised learning) 정답O
+비지도(자율)학습(unsupervised learning) 정답X
+강화학습(reinforcement learning) 보상, 벌O
+
+20 비지도학습
+군집 Clustering 영어
+
+24 머신러닝 과정
+중요
+
+27 인공신경망에서 시작된 딥러닝
+퍼셉트론
+– 세계 최초의 인공신경망을 제안
+• 1957년 코넬대 교수, 심리학자인 프랭크 로젠블랫(Frank Rosenblatt)
+– 신경망에서는 방대한 양의 데이터를 신경망으로 유입
+• 데이터를 정확하게 구분하도록 시스템을 학습시켜 원하는 결과를 얻어냄
+
+36 CUDA
+• GPU 업체인 NVIDIA의 GPU를 사용하기 위한 라이브러리 소프트웨어
+
+39 구글의 TPU
+
+------------------------------------
+11 TensorFlow 계산 과정
+그래프(Graph)
+그래프를 계산하려면 세션(Session)
+
+35 조건 연산 tf.cond()
+• tf.cond(pred, true_fn=None, false_fn=None, name=None)
+lambda
+
+38 배열 텐서 연산
+매우 중요
+
+import numpy as np
+print(np.arange(3)) -> [0 1 2]
+print(np.ones((3, 3))) -> 3행, 3열로 값이 모두 1.인 배열 생성
+
+40 브로드캐스팅 코드 2
+중간고사 시험때 반드시!
+ones는 float형
+x = tf.constant(np.arange(3).reshape(3, 1))
+-> reshape은 3x1의 행렬로 형태 변경
+
+pow(a, b) 는 a의 b제곱
+
+mean = tf.reduce_mean([a, b, c])
+sum = tf.reduce_sum([a, b, c])
+-> 차원을 줄여나가면서 평균값, 덧셈값 구함
+
+------------------------------------
+5 행렬곱셈
+중간고사에 꼭
+2X3 3X2에서 3으로 똑같아야 함
+-> 앞에 있는 열과 뒤에있는 행의 값 갯수가같아야 함
+
+# Matrix multiplications 1
+matrix1 = tf.constant([[1., 2.], [3., 4.]])
+matrix2 = tf.constant([[2., 0.], [1., 2.]])
+
+gop = tf.matmul(matrix1, matrix2)
+print(gop.numpy())
+
+# Matrix multiplications 2
+gop = tf.matmul(matrix2, matrix1)
+print(gop.numpy())
+
+[[ 4.  4.]
+ [10.  8.]]
+[[ 2.  4.]
+ [ 7. 10.]]
+
+7 브로드캐스팅
+중요
+
+my_image = tf.zeros([2, 5, 5, 3]) -> 0으로 채워진 배열 만듦, float
+my_image.shape
+-> TensorShape([2, 5, 5, 3])
+
+tf.rank(my_image) -> 몇 차원 배열이냐
+-> <tf.Tensor: shape=(), dtype=int32, numpy=4>
+
+14 Shape과 reshape
+-1은 자동! 알아서 정해라
+중요
+
+rank_three_tensor = tf.ones([3, 4, 5]) -> 갈수록 작아지는 개념
+rank_three_tensor.shape
+-> TensorShape([3, 4, 5])
+
+# 기존 내용을 4x3x5 텐서로 형태 변경
+matrixAlt = tf.reshape(matrixB, [4, 3, -1])
+
+# 정수형 텐서를 실수형으로 변환.
+float_tensor = tf.cast(tf.constant([1, 2, 3]), dtype=tf.float32)
+-> <tf.Tensor: shape=(3,), dtype=float32, numpy=array([1., 2., 3.], dtype=float32)>
+
+변수 Variable
+v = tf.Variable(2.0)
+v.assign_add(5) -> 값을 변수에 할당
+v
+-> <tf.Variable 'Variable:0' shape=() dtype=float32, numpy=7.0>
+
+v.read_value() -> 현재 변수값 읽기
+-> <tf.Tensor: shape=(), dtype=float32, numpy=7.0>
+
+21 균등분포 난수
+tf.random.uniform([배열], 0(시작), 1(끝))
+print문에서 슬라이싱은 배열이름[:3] -> 앞에서 3개 (3차원 개념)
+배열이름[2:-1] -> 2부터 -1(즉 끝까지)
+
+22 균등 분포 1000개 그리기
+import matplotlib.pyplot as plt
+rand = tf.random.uniform([10000], 0, 50) -> 정규분포면 normal 값이 클수록 종모양
+plt.hist(rand, bins=10) -> hist 막대그래프 bins 막대 개수
+
+23 정규분포 난수
+tf.random.normal([배열], 0(평균), 1(표준편차))
+
+26 그래프 2개로 그리기
+import matplotlib.pyplot as plt
+rand1 = tf.random.normal([1000], 0, 1)
+rand2 = tf.random.uniform([2000], 0, 1)
+
+plt.rcParams["figure.figsize"] = (12, 6) -> 가로, 세로 길이
+fig, axes = plt.subplots(1, 2, sharex=True, sharey=True) -> 1행, 2열, x축 공유, y축 공유
+axes[0].hist(rand1, bins=100)
+axes[1].hist(rand2, bins=100)
+
+27 shuffle
+import numpy as np
+a = np.arange(20).reshape(4, 5)
+tf.random.shuffle(a)
+-> <tf.Tensor: shape=(4, 5), dtype=int64, numpy=
+array([[15, 16, 17, 18, 19],
+       [ 5,  6,  7,  8,  9],
+       [ 0,  1,  2,  3,  4],
+       [10, 11, 12, 13, 14]])>
+
+------------------------------------
+8 케라스 딥러닝 구현
+정규화가 0~1 이나 0~n 실수로 구성하는 작업
+
+import tensorflow as tf
+
+mnist = tf.keras.datasets.mnist
+# MNIST 데이터셋을 훈련과 테스트 데이터로 로드하여 준비
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+15 행렬 내용 직접 출력
+import sys
+
+for x in x_train[0]:
+    for i in x:
+        sys.stdout.write('%3d' % i) -> printf처럼 사용
+    sys.stdout.write('\n') //행 바꿈
+-> 5 출력
+
+17 테스트 데이터 마지막 손글씨
+import matplotlib.pyplot as plt
+
+n = len(y_test)-1
+ttl = str(y_test[n])
+plt.figure(figsize=(6, 4)) -> 
+plt.title(ttl)
+plt.imshow(x_test[n], cmap='Greys') -> Blues
+-> 6 출력
+
+plt.show() -> 보여줄 것이 여러개 있을 때
+
+19 0~59999 중의 임의 수 20개 선택
+import tensorflow as tf
+mnist = tf.keras.datasets.mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+from random import sample
+nrows, ncols = 4, 5 #출력 가로 세로 수
+# 출력할 첨자 선정
+idx = sorted(sample(range(len(x_train)), nrows * ncols)) 
+#print(idx) -> 20개 숫자 [ , , ] 출력
+
+count = 0
+plt.figure(figsize=(12, 10))
+
+for n in idx:
+    count += 1
+    plt.subplot(nrows, ncols, count)
+    tmp = "Index: " + str(n) + "  Label: " + str(y_train[n])
+    plt.title(tmp)
+    plt.imshow(x_train[n], cmap='Greys')
+
+plt.tight_layout() -> graph의 패딩을 자동으로 조절해주어 fit한 graph를 생성
+plt.show()
+
+29 모델 구성
+Flatten 평평하게 1줄로 만듦
+Dense 히든층 만듦 -> 뉴런 수(임의 값) | 출력 때 -> 클래스 수
+사이에 가중치랑 편향은 컴퓨터가 알아내야하는 최종 값
+=> 패러메터(가중치+편향)
+
+① 훈련과 정답 데이터 지정
+① - 1 데이터 전처리(옵션)
+import tensorflow as tf
+
+mnist = tf.keras.datasets.mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# 샘플 값을 정수(0~255)에서 부동소수(0~1)로 변환
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+② 모델 구성
+# 층을 차례대로 쌓아 tf.keras.models.Sequential 모델을 생성
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Flatten(input_shape=(28, 28)), -> 60000 개의 (28, 28) 크기를 가진 배열 
+    tf.keras.layers.Dense(128, activation='relu'), -> Dense() 완전 연결층, activation 활성화 함수
+    tf.keras.layers.Dropout(0.2), -> 훈련 중에 20%를 중간에 끊음, 예측때는 모두 사용
+    tf.keras.layers.Dense(10, activation='softmax') -> 출력이 10개, 확률값이 가장 큰 것이 결과
+])
+
+③ 학습에 필요한 최적화 방법과 손실 함수 등 설정
+③ - 1 구성된 모델 요약(옵션)
+# 모델 요약 표시
+model.summary()
+-> Total params: 101,770 -> 모델이 구해야 할 수의 개수
+
+# 훈련에 사용할 옵티마이저(optimizer)와 손실 함수, 출력정보를 모델에 설정
+model.compile(optimizer='adam', -> 옵티마이저 (입력된 데이터와 손실 함수를 기반으로 모델(w와 b)을 업데이트하는 메커니즘)
+              loss='sparse_categorical_crossentropy', -> 손실 함수 (• 훈련 데이터에서 신경망의 성능을 측정하는 방법 • 모델이 옳은 방향으로 학습될 수 있도록 도와 주는 기준 값)
+              metrics=['accuracy']) -> 훈련과 테스트 과정을 모니터링할 지표 (여기에서는 정확도(정확히 분류된 이미지의 비율)만 고려)
+              # metrics=['accuracy', 'mse'])
+
+④ 생성된 모델로 훈련 데이터 학습
+# 모델을 훈련 데이터로 총 5번 훈련
+model.fit(x_train, y_train, epochs=5)
+
+# 모델을 테스트 데이터로 평가
+model.evaluate(x_test, y_test)
+
+36 드롭아웃
+
+38 활성화 함수
+출력 전에 활성화 함수를 거침
+
+------------------------------------
+5
+one hot encoding -> 하나의 자리만 1, 나머지는 모두 0
+one = np.argmax(one_pred) -> 가장 큰 수의 위치 첨자를 반환
+print(one)
+
+print(tf.reduce_sum(one_pred).numpy())
+-> 1.0
+
+numpy 말고 tensorflow에도 있음
+print(tf.argmax(one_pred).numpy())
+
+16
+np.arange(1, 11) ->   1부터 10까지
+
+tf.random.set_seed(0) 시드값 주면 항상 같은값 나옴
+training=True로 해야 Dropout()이 됨
+
+28 MNIST 손글씨 다양한 구현
+시험문제 냄!
+
+------------------------------------
+19 계산 사례
+시험문제 냄!
+
+25 자연수와 자연수의 지수 승
+x = np.linspace(-8, 8, 100) -> -8에서 8까지 100등분해서 배열로
+plt.plot(x, np.exp(-x), 'b--') -> exp는 y = e에 -x승, blue 점선으로
+
+26 시그모이드 함수 (S자 곡선) -> 0, 1 사이의 값
+def sigm_func(x):
+    return 1 / (1 + np.exp(-x))
+
+27 ReLU 함수
+0, 음수면 0이고 양수면 x값
+def relu_func(x):
+    return np.maximum(0, x)
+
+28
+plt.plot(x, sigm_func(x), linestyle=':', label="ReLU") -> 간격이 더 좁은 점선
+plt.legend(loc='upper left') -> 범례
+
+32 계산 사례
+x = [[1, 2]]
+w = [[1, 2, 3], [4, 5 6]]
+
+y = tf.matmul(x, w)
+y.numpy()
+-> array([[9, 12, 15]], dtype=int32)
+
+37 AND 게이트 구현
+0이 있으면 0
+가중치와 편향을 정하는 것 -> 딥러닝 통해
+
+38
+unist=1 -> 출력이 1개
+activation='sigmoid' -> 결과값이 0과 1사이
+input_shape=(2,) -> 입력이 2개인 1차원 백터
+
+lr=0.3 -> 학습율
+loss='mse' -> 손실값
+
+-> Param -> 가중치 + 편향(2+1)
+->이거를 정하는게 fit -> fit 돌리면 고정됨
+
+40 가중치와 편향 값 알아 보기
+for weight in model.weights:
+    print(weight)
+-> w1, w2가 배열 0번째로 나오고 bias가 1번째로 나옴
+=> 이거를 다르게 표현하면
+model.weights[0] -> w1, w2(kernel)
+model.weights[1] -> bias
+
+41 OR 게이트 구현
+1이 있으면 1
+
+42 XOR 문제
+XOR은 같으면 0, 다르면 1
+Dense층 2개
+3x2 + 3x1 = 9
+
+45
+패러미터 수 구하는 법 암기!
+= (입력측 뉴런 수 + 1) * (출력측 뉴런 수)
+
+------------------------------------
+2 회귀(regression)와 분류(classification)
+영어 알아두셈
+
+7 주요 용어 정리
+손실함수(Loss Function) 중요
+-> 예측 값의 오차를 줄이는 일에 최적화 된 식
+MSE(Mean Square Error 평균제곱오차)
+
+옵티마이저(Optimizer): 최적화과정(w, b를 잘 구하려는 것)
+-> 경사 하강법(Gradient Descent)
+
+학습률
+-> 학습률의 값을 적당하게 중요
+초매개변수 -> 사람이 정할 수 있는 것 (하이퍼패러미터) -> 가중치, 편향 2개 제외한 나머지
+
+29 오차역전파 중요
+
+선형 회귀
+y = 2x 예측
+
+34
+확률적 경사하강법
+optimizer='SGD'
+mse - 오차 평균 재곱합 -> 모든 예측과 정답과의 오차 제곱 합의 평균
+model.compile(optimizer='SGD', loss='mse', metrics=['mae', 'mse'])
+-> 훈련에 사용할 옵티마이저, 손실 함수, 출력 정보 지정
+
+37 예측
+pred = model.predict([3.5, 5, 5.5, 6])
+print(pred.flatten()) 혹은 squeeze
+
+39 예측 값 시각화
+plt.scatter(x_test, y_test, label='label') -> 점으로 표시

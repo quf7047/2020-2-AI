@@ -1,0 +1,67 @@
+09W-1-tf2-ch04.ipynb
+
+[9주 1교시]
+인구증가율과 고령인구비율
+회귀분석
+tanh
+7
+plt.axhline(0, color='gray') -> 0으로 기준 horizental(가로)
+axvline -> vertical(세로)
+plt.plot(x, sigmoid_x, 'b-', label='sigmoid') -> 파랑 실선 0~1
+plt.plot(x, tanh_x, 'r--', label='tanh') -> 빨강 점선 -1~1
+8
+입력 1 중간 6 출력 1
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(units=6, activation='tanh', input_shape=(1,)), -> 중간층 6개
+    tf.keras.layers.Dense(units=1) -> 출력 1개
+])
+model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.1), loss='mse') -> 학습률 0.1
+11
+파란게 주어진 데이터 -> 가장 잘 표현하는 선 => 회귀분석
+line_x = np.arange(min(X), max(X), 0.01)
+-> X데이터를 min과 max로 사이값을 0.01로 해서 만들고
+line_y = model.predict(line_x)
+-> 예측 값
+plt.plot(X, Y, 'bo') -> 원래 X, Y는 파랑 동그라미
+13
+optimizer 최적화 과정(복잡한 미분 계산 및 가중치 수정)을 자동으로 진행
+SGD, adam(손실 함수 값이 많이 줄어들음)
+14
+변수 Variables
+딥러닝 학습에서 최적화 과정
+- 모델의 매개변수 즉, 가중치 및 편향을 조정하는 것
+변수 tf.Variable
+프로그램에 의해 변화하는 공유된 지속 상태를 표현하는 가장 좋은 방법
+- 하나의 텐서를 표현
+- 텐서 값은 텐서에 연산을 수행하여 변경 가능
+모델 파라미터를 저장하는데 tf.Variable 사용
+a = tf.Variable(random.random()) -> 정규화 분포를 따르는 수
+a = tf.Variable(tf.random.uniform([1], 0, 1)) -> 0과 1 사이의 아무거나
+15
+optimizer.minimize(compute_loss, var_list=[a, b])
+-> minimize(손실함수, 변화될 가중치, 편향)
+16
+def compute_loss():
+    y_pred = a * X + b -> 결과치
+    loss = tf.reduce_mean((Y - y_pred) ** 2) -> (실제 데이터 값 - 결과치)의 제곱으로 평균을 구함
+    return loss -> 그게 손실값
+17
+    if i % 100 == 99:
+        print(i, 'a:', a.numpy(), 'b:', b.numpy(), 'loss:', compute_loss().numpy())
+손실 함수값이 점점 줄어들음
+18
+직선이 나옴
+19
+line_x = np.arange(min(X), max(X), 0.01) -> 최소값에서 최대값까지 0.01씩 증가시켜 라인x를 만들고
+line_y = a * line_x + b -> 정한 a, b로 라인y 정함
+
+[9주 2교시]
+20
+y값이 주택 가격 값
+21
+속성의 단위 등 다양한 값 -> 정규화 필요
+23
+층 4개 입력층 13개, 중간층 3개(52,39,26), 출력층 1개
+24
+history = model.fit(train_X, train_Y, epochs=25, batch_size=32, validation_split=0.25)
+-> validation_split 검증용은 25%, batch_size는 훈련에서 가중치와 편향의 패러미터를 수정하는 데이터 단위 수(데이너 32개 돌리고 나서 바꾼다는 뜻)
